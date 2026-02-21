@@ -104,7 +104,7 @@ const projectsData = [
 ];
 
 const skillsData = {
-  "Languages": { icon: <Terminal size={20} />, list: ["C++", "JavaScript", "Python", "SQL"] },
+  "Languages": { icon: <Terminal size={20} />, list: ["C++", "C#", "JavaScript", "Python", "SQL"] },
   "Frontend": { icon: <Globe size={20} />, list: ["React", "HTML5", "CSS3", "i18next", "Framer Motion"] },
   "Backend": { icon: <Cpu size={20} />, list: ["Node.js", "Express.js", "REST APIs", "JWT Auth"] },
   "Databases": { icon: <Database size={20} />, list: ["MongoDB", "MySQL", "PostgreSQL"] },
@@ -112,7 +112,7 @@ const skillsData = {
   "Tools": { icon: <Code2 size={20} />, list: ["Git/GitHub", "Docker", "Postman", "Razorpay"] }
 };
 
-const certificatesData = [
+const coursesData = [
   { name: "Cloud Computing", platform: "NPTEL (IIT Kharagpur)", date: "2024", link: "/my_certificates/Cloud Computing certificate.pdf" },
   { name: "Marketing Analytics", platform: "NPTEL (IIT Kharagpur)", date: "2025", link: "/my_certificates/Marketing Analytics.pdf" },
   { name: "MongoDB Node.js Developer Path", platform: "MongoDB University (SmartBridge)", date: "2025", link: "/my_certificates/MongoDb_Certificate.pdf" },
@@ -190,7 +190,7 @@ const About = () => (
       <div className="about-grid">
         <motion.div {...fadeInUp}>
           <p className="about-text">
-            I am a final-year CS student at Vellore Institute of Technology (CGPA: 8.50).
+            I am a final-year CS student at Vellore Institute of Technology (CGPA: 8.53).
             My passion lies in architecting robust digital solutions and diving deep into system internals.
           </p>
           <p className="about-text">
@@ -203,7 +203,7 @@ const About = () => (
             </h3>
             <p style={{ fontWeight: 600 }}>B.Tech in Computer Science & Engineering</p>
             <p style={{ color: 'var(--text-muted)' }}>Vellore Institute of Technology</p>
-            <p style={{ color: 'var(--accent-secondary)', fontSize: '0.9rem' }}>CGPA: 8.50/10 • Expected 2026</p>
+            <p style={{ color: 'var(--accent-secondary)', fontSize: '0.9rem' }}>CGPA: 8.53/10 • Expected 2026</p>
           </div>
         </motion.div>
 
@@ -215,10 +215,10 @@ const About = () => (
           className="about-stats"
         >
           {[
-            { label: 'CGPA', value: '8.50' },
+            { label: 'CGPA', value: '8.53' },
             { label: 'Projects', value: '10+' },
-            { label: 'Certifications', value: '9+' },
-            { label: 'Languages', value: '4' }
+            { label: 'Courses', value: '9+' },
+            { label: 'Languages', value: '5' }
           ].map((stat, i) => (
             <motion.div key={i} variants={fadeInUp} className="stat-card">
               <span className="stat-value">{stat.value}</span>
@@ -333,10 +333,10 @@ const Projects = () => (
   </section>
 );
 
-const Certificates = () => (
+const Courses = () => (
   <section className="section" style={{ background: 'rgba(6, 182, 212, 0.02)' }}>
     <div className="container">
-      <motion.h2 {...fadeInUp} className="section-title">Professional Training</motion.h2>
+      <motion.h2 {...fadeInUp} className="section-title">Courses Completed</motion.h2>
       <motion.div
         variants={staggerContainer}
         initial="initial"
@@ -344,7 +344,7 @@ const Certificates = () => (
         viewport={{ once: true }}
         className="certificates-grid"
       >
-        {certificatesData.map((cert, idx) => (
+        {coursesData.map((cert, idx) => (
           <motion.div key={idx} variants={fadeInUp} className="cert-card">
             <Award size={24} color="var(--accent-secondary)" style={{ marginBottom: '1rem' }} />
             <h3 className="cert-name">{cert.name}</h3>
@@ -379,6 +379,15 @@ const Contact = () => (
           <a href="https://github.com/Rishabh-k-Paliwal" target="_blank" rel="noopener noreferrer" className="contact-link">
             <Github size={20} /> GitHub
           </a>
+          <a href="https://leetcode.com/u/rishabhrp13/" target="_blank" rel="noopener noreferrer" className="contact-link">
+            <Code2 size={20} /> LeetCode
+          </a>
+          <a href="https://codeforces.com/profile/Rishabh_paliwal" target="_blank" rel="noopener noreferrer" className="contact-link">
+            <Code2 size={20} /> Codeforces
+          </a>
+          <a href="https://www.geeksforgeeks.org/profile/rishabxazl?tab=overview" target="_blank" rel="noopener noreferrer" className="contact-link">
+            <Globe size={20} /> GFG
+          </a>
         </div>
 
         <div style={{ marginTop: '4rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
@@ -398,10 +407,11 @@ const App = () => {
       <About />
       <Skills />
       <Projects />
-      <Certificates />
+      <Courses />
       <Contact />
     </div>
   );
 };
 
 export default App;
+
