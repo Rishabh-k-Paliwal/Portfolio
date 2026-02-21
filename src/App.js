@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Github,
@@ -15,43 +15,42 @@ import {
   Layers,
   Terminal,
   Award,
-  GraduationCap
+  GraduationCap,
+  X
 } from 'lucide-react';
 import './styles.css';
 
 // Data Files
 const projectsData = [
   {
-    id: 1,
-    title: "AI Distributed Web App",
-    shortDesc: "Scalable full-stack application with real-time LLM interactions and dynamic model routing.",
-    techStack: ["React", "Node.js", "LLM APIs", "Streaming"],
-    github: "https://github.com/Rishabh-k-Paliwal",
-    live: "",
-    video: "",
-    highlights: [
-      "Designed and built a scalable full-stack application using React",
-      "Implemented streaming responses for real-time interactions with multiple LLMs",
-      "Engineered dynamic model-routing logic to integrate multiple API endpoints",
-      "Asynchronous request handling and efficient state management"
-    ],
-    duration: "Nov 2025 – Jan 2026"
-  },
-  {
     id: 2,
     title: "AstroAryabhatta",
-    shortDesc: "Production-grade astrology consultation platform with slot booking and secure payments.",
-    techStack: ["React", "Node.js", "MongoDB", "Razorpay", "i18next"],
+    shortDesc: "Full-stack consultation booking platform with real-time availability, secure payments, and multilingual UX.",
+    techStack: ["React", "Node.js", "MongoDB", "Razorpay", "i18next", "JWT"],
     github: "https://github.com/Rishabh-k-Paliwal",
-    live: "",
+    live: "https://astro-aryabhatt-s3dx.vercel.app/",
     video: "https://drive.google.com/file/d/1Ni7-6G_rQ2WPkNWkro1a2ZQYwM5VPRyl/view?usp=sharing",
     highlights: [
-      "Designed a real-world time-slot inventory system for consultation-based services",
-      "Implemented secure payment-confirmed booking using Razorpay webhooks",
-      "Built multilingual (Hindi/English), mobile-first, SEO-ready UI",
-      "Focused on trust-driven UX suitable for professional consultation platforms"
+      "Built full-stack booking system with real-time availability and date validation",
+      "Integrated Razorpay payment workflows, webhook verification, and secure transactions",
+      "Designed multilingual UI using i18n and responsive architecture",
+      "Focused on performance, scalability, and secure authentication"
     ],
-    duration: "Jan 2026"
+  },
+  {
+    id: 6,
+    title: "E-Rent",
+    shortDesc: "Distributed marketplace platform with modular backend, secure workflows, and scalable APIs.",
+    techStack: ["React", "Node.js", "Express", "MongoDB", "JWT", "REST APIs"],
+    github: "https://github.com/Rishabh-k-Paliwal",
+    live: "https://project2026for-vercel-bt3c.vercel.app/",
+    video: "",
+    highlights: [
+      "Developed modular Node.js backend with role-based access and secure workflows",
+      "Optimized database queries and indexing for high-performance APIs",
+      "Implemented scalable architecture, validation, and error handling",
+      "Built reusable frontend components and state-driven UI"
+    ],
   },
   {
     id: 3,
@@ -67,7 +66,6 @@ const projectsData = [
       "Designed multithreaded execution models using 12+ threads, analyzing efficiency",
       "Analyzed algorithmic complexity through implementations of sorting algorithms"
     ],
-    duration: "Sept 2025"
   },
   {
     id: 4,
@@ -83,7 +81,6 @@ const projectsData = [
       "Built an interactive Power BI dashboard to analyze customer segments",
       "Translated findings into structured reports for business recommendations"
     ],
-    duration: "Aug 2025"
   },
   {
     id: 5,
@@ -99,7 +96,6 @@ const projectsData = [
       "Developed a responsive UI to ensure seamless usage across devices",
       "Focused on data privacy by isolating records per authenticated user"
     ],
-    duration: "Jan 2025"
   }
 ];
 
@@ -140,10 +136,33 @@ const staggerContainer = {
   whileInView: { transition: { staggerChildren: 0.1 } }
 };
 
+const getEmbeddableVideoUrl = (url) => {
+  if (!url) return '';
+
+  if (url.includes('drive.google.com')) {
+    const match = url.match(/\/file\/d\/([^/]+)/);
+    if (match?.[1]) return `https://drive.google.com/file/d/${match[1]}/preview`;
+  }
+
+  if (url.includes('youtube.com/watch')) {
+    const match = url.match(/[?&]v=([^&]+)/);
+    if (match?.[1]) return `https://www.youtube.com/embed/${match[1]}`;
+  }
+
+  if (url.includes('youtu.be/')) {
+    const match = url.match(/youtu\.be\/([^?&/]+)/);
+    if (match?.[1]) return `https://www.youtube.com/embed/${match[1]}`;
+  }
+
+  return url;
+};
+
 // Components
 const Navbar = () => (
   <nav className="navbar">
-    <a href="/" className="nav-logo">RP.</a>
+    <a href="/" className="nav-logo" aria-label="Home">
+      <img src="/garuda.png" alt="Rishabh Paliwal logo" className="nav-logo-image" />
+    </a>
     <div className="nav-links">
       <a href="#about" className="nav-link">About</a>
       <a href="#skills" className="nav-link">Skills</a>
@@ -162,14 +181,11 @@ const Hero = () => (
       transition={{ duration: 0.8 }}
       className="container"
     >
-      <span className="hero-badge">Open to SDE Opportunities</span>
       <h1 className="hero-name">Rishabh Paliwal</h1>
-      <p className="hero-title">Software Development Engineer</p>
       <p className="hero-subtitle">
         B.Tech Computer Science student at VIT. Specialist in scalable full-stack applications and distributed systems.
       </p>
       <div className="hero-cta">
-        <a href="#projects" className="cta-primary">View Portfolio</a>
         <a href="#projects" className="cta-secondary">
           <Code2 size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
           Projects
@@ -177,6 +193,14 @@ const Hero = () => (
         <a href="https://linkedin.com/in/rishabh-paliwal" target="_blank" rel="noopener noreferrer" className="cta-secondary">
           <Linkedin size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
           LinkedIn
+        </a>
+        <a href="https://github.com/Rishabh-k-Paliwal" target="_blank" rel="noopener noreferrer" className="cta-secondary">
+          <Github size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+          GitHub
+        </a>
+        <a href="https://leetcode.com/u/rishabhrp13/" target="_blank" rel="noopener noreferrer" className="cta-secondary">
+          <Code2 size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+          LeetCode
         </a>
       </div>
     </motion.div>
@@ -259,7 +283,62 @@ const Skills = () => (
   </section>
 );
 
-const ProjectCard = ({ project }) => {
+const DemoModal = ({ project, onClose }) => {
+  const embedUrl = getEmbeddableVideoUrl(project?.video);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
+  if (!project) return null;
+
+  return (
+    <motion.div
+      className="video-modal-overlay"
+      onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        className="video-modal"
+        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.98 }}
+      >
+        <div className="video-modal-header">
+          <h3>{project.title} Demo</h3>
+          <button type="button" onClick={onClose} className="video-close-btn" aria-label="Close demo modal">
+            <X size={18} />
+          </button>
+        </div>
+        <div className="video-frame-wrap">
+          {embedUrl ? (
+            <iframe
+              src={embedUrl}
+              title={`${project.title} demo video`}
+              className="video-frame"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+            />
+          ) : (
+            <p className="video-fallback">Video preview is unavailable. Open the demo in a new tab.</p>
+          )}
+        </div>
+        <a href={project.video} target="_blank" rel="noopener noreferrer" className="video-open-link">
+          Open Original Demo <ExternalLink size={14} />
+        </a>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const ProjectCard = ({ project, onPlayDemo }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -270,7 +349,6 @@ const ProjectCard = ({ project }) => {
       <div className="project-content">
         <div className="project-header">
           <h3 className="project-title">{project.title}</h3>
-          <span className="project-duration">{project.duration}</span>
         </div>
         <p className="project-short-desc">{project.shortDesc}</p>
         <div className="tech-stack">
@@ -297,15 +375,24 @@ const ProjectCard = ({ project }) => {
         </AnimatePresence>
 
         <div className="project-actions">
+          {project.live && (
+            <a href={project.live} target="_blank" rel="noopener noreferrer" className="project-link" style={{ borderColor: 'var(--accent-secondary)' }}>
+              <ExternalLink size={16} /> Live
+            </a>
+          )}
           {project.github && (
             <a href={project.github} target="_blank" rel="noopener noreferrer" className="project-link">
               <Github size={16} /> Source
             </a>
           )}
           {project.video && (
-            <a href={project.video} target="_blank" rel="noopener noreferrer" className="project-link" style={{ borderColor: 'var(--accent-secondary)' }}>
+            <button
+              type="button"
+              className="project-link project-demo-btn"
+              onClick={() => onPlayDemo(project)}
+            >
               <Video size={16} /> Demo
-            </a>
+            </button>
           )}
           <button
             onClick={() => setExpanded(!expanded)}
@@ -320,13 +407,13 @@ const ProjectCard = ({ project }) => {
   );
 };
 
-const Projects = () => (
+const Projects = ({ onPlayDemo }) => (
   <section id="projects" className="section">
     <div className="container">
       <motion.h2 {...fadeInUp} className="section-title">Featured Projects</motion.h2>
       <div className="projects-grid">
         {projectsData.map(project => (
-          <ProjectCard key={project.id} project={project} />
+          <ProjectCard key={project.id} project={project} onPlayDemo={onPlayDemo} />
         ))}
       </div>
     </div>
@@ -365,9 +452,8 @@ const Contact = () => (
         {...fadeInUp}
         className="contact-card"
       >
-        <Award size={48} className="float" style={{ color: 'var(--accent-primary)', marginBottom: '1.5rem' }} />
-        <h2 className="footer-title">Let's Build Together</h2>
-        <p className="footer-subtitle">Currently seeking engineering roles where I can make an impact.</p>
+        <h2 className="footer-title">Get In Touch</h2>
+        <p className="footer-subtitle">Available for software engineering opportunities and collaboration.</p>
 
         <div className="contact-links">
           <a href="mailto:rishabh.kp.04@gmail.com" className="contact-link">
@@ -400,15 +486,20 @@ const Contact = () => (
 
 // Main App
 const App = () => {
+  const [activeDemo, setActiveDemo] = useState(null);
+
   return (
     <div className="app">
       <Navbar />
       <Hero />
       <About />
       <Skills />
-      <Projects />
+      <Projects onPlayDemo={setActiveDemo} />
       <Courses />
       <Contact />
+      <AnimatePresence>
+        {activeDemo && <DemoModal project={activeDemo} onClose={() => setActiveDemo(null)} />}
+      </AnimatePresence>
     </div>
   );
 };
